@@ -24,6 +24,7 @@ config_t* config_load(const char* fn) {
     cf->bodysize = 1024;
     cf->handler = (char*)malloc(strlen(HANDLER) + 1);
 	strcpy(cf->handler, HANDLER);
+    cf->finishhandler = (char*)malloc(strlen(HANDLER) + 1);
 	cf->headers = (char*)malloc(strlen(HEADERS) + 1);
 	strcpy(cf->headers, HEADERS);
     cf->httpstatus = (char*)malloc(strlen(HTTP_STATUS) + 1);
@@ -62,6 +63,7 @@ config_t* config_load(const char* fn) {
 			luaL_getglobal_int(cf->L, "bodysize", &cf->bodysize);
 			luaL_getglobal_str(cf->L, "headers", &cf->headers);
 			luaL_getglobal_str(cf->L, "handler", &cf->handler);
+			luaL_getglobal_str(cf->L, "finishhandler", &cf->finishhandler);
 			luaL_getglobal_str(cf->L, "httpstatus", &cf->httpstatus);
 			luaL_getglobal_str(cf->L, "contenttype", &cf->contenttype);
 			luaL_getglobal_int(cf->L, "maxpost", &cf->maxpost);
@@ -100,6 +102,7 @@ void config_free(config_t* conf) {
 		if (conf->L) lua_close(conf->L);
 		if (conf->listen) free(conf->listen);
 		if (conf->handler) free(conf->handler);
+		if (conf->finishhandler) free(conf->finishhandler);
 		if (conf->headers) free(conf->headers);
 		if (conf->httpstatus) free(conf->httpstatus);
 		if (conf->contenttype) free(conf->contenttype);

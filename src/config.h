@@ -27,6 +27,7 @@ struct config_struct {
 	int bodysize;
 	char* headers;
 	char* handler;
+	char* finishhandler;
 	char* httpstatus;
 	char* contenttype;
 	int maxpost;

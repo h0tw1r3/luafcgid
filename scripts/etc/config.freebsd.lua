@@ -38,6 +38,9 @@ headers = "X-Powered-By: Lua\r\n"
 -- handler function name
 handler = "main"
 
+-- post request handler function name
+finishhandler = "finish"
+
 -- default HTTP status
 httpstatus = "200 OK"
 

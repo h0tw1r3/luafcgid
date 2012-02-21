@@ -463,6 +463,27 @@ static void *worker_run(void *a) {
 
 		FCGX_Finish_r(&req.fcgi);
 
+		if ( strlen(req.conf->finishhandler) > 1 ) {
+#ifdef CHATTER
+			logit("[%d] calling finish handler: %s()", params->wid, req.conf->finishhandler);
+#endif
+			lua_getglobal(L, req.conf->finishhandler);
+			if (lua_isfunction(L, -1)) {
+				luaL_pushcgienv(L, &req);
+				luaL_pushrequest(L, &req);
+				rc = lua_pcall(L, 2, 0, 0);
+				if (rc != STATUS_OK) {
+					strncpy(errmsg, lua_tostring(L, -1), ERR_SIZE);
+					errmsg[ERR_SIZE] = '\0';
+					logit("[%d] %s", params->wid, errmsg);
+					lua_pop(L, 1);
+				}
+			} else {
+				rc = LUA_ERRRUN;
+				logit("[%d] %s() function not found", params->wid, req.conf->finishhandler);
+			}
+		}
+
 		if (slot) {
 			/* we are done with the slot, so we shall flag out */
 			pool_lock(pool);
